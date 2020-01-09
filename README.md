@@ -13,19 +13,27 @@ Ensure that you have installed [Django](https://www.djangoproject.com/). Run `py
 
 ### Installing
 
-Create local virtual environment. TODO
-
-Run `env/Scripts activate` on Windows or `source env/bin/activate` on Mac OS.
+Create local virtual environment. Run `virtualenv env`. Enter created environment with running `env\Scripts\activate` on Windows or `source env/bin/activate` on Mac OS.
 
 After it, run `pip install -r requirements.txt` to install all necessary tools. Enter your virtual environment.
-
 
 ## Running project
 
 Ensure that you are using your virtual environment.
 
+Move to books folder.
+
 Run 
 ```
 python3 manage.py runserver
 ```
+on MAC OS/Linux or
+```
+python manage.py runserver
+```
+on Windows
 to start server work.
+
+## Tests
+
+TODO
