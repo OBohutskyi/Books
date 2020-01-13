@@ -18,27 +18,27 @@ class TestUsersData:
 
         result = self.users_data.add(self.user)
 
-        assert result is True
+        assert True is result
         mock_registered_users.append.assert_called_with(self.user)
 
     @mock.patch('app.users.data.registered_users')
     def test_add_existing_user(self, mock_registered_users):
         mock_registered_users.append = mock.Mock()
-        mock_registered_users.__contains__ = mock.Mock(return_value=True)
+        mock_registered_users.__iter__ = mock.Mock(return_value=iter([self.user]))
 
         result = self.users_data.add(self.user)
 
-        assert result is False
+        assert False is result
         mock_registered_users.append.assert_not_called()
-        mock_registered_users.__contains__.assert_called_with(self.user)
 
     @mock.patch('app.users.data.registered_users')
     def test_delete_existing_user(self, mock_registered_users):
         mock_registered_users.remove = mock.Mock()
+        mock_registered_users.__iter__ = mock.Mock(return_value=iter([self.user]))
 
-        result = self.users_data.delete(self.user)
+        result = self.users_data.delete(str(self.user.id))
 
-        assert result == self.user
+        assert self.user == result
         mock_registered_users.remove.assert_called_with(self.user)
 
     @mock.patch('app.users.data.registered_users')
@@ -46,42 +46,38 @@ class TestUsersData:
         mock_registered_users.remove = mock.Mock(side_effect=ValueError)
 
         with pytest.raises(Exception) as e:
-            self.users_data.delete(self.user)
+            self.users_data.delete(self.user.username)
 
-        assert str(e.value) == 'User not found'
-        mock_registered_users.remove.assert_called_with(self.user)
+        assert 'User not found' == str(e.value)
 
     @mock.patch('app.users.data.registered_users')
     def test_update_existing_user(self, mock_registered_users):
-        mock_registered_users.index = mock.Mock()
+        mock_registered_users.__iter__ = mock.Mock(return_value=iter([self.user]))
 
-        result = self.users_data.update(self.user, 'new_password_hash')
+        result = self.users_data.update(str(self.user.id), 'new_password_hash')
 
-        assert result is True
-        mock_registered_users.index.assert_called_with(self.user)
+        assert True is result
 
     @mock.patch('app.users.data.registered_users')
     def test_update_not_existing_user(self, mock_registered_users):
-        mock_registered_users.index = mock.Mock(side_effect=ValueError)
+        mock_registered_users.__iter__ = mock.Mock(return_value=iter([]))
 
-        new_user = User('new_user2', 'password2')
-        result = self.users_data.update(new_user, 'new_password_hash')
+        result = self.users_data.update(2, 'new_password_hash')
 
-        assert result is False
-        mock_registered_users.index.assert_called_with(new_user)
+        assert False is result
 
     def test_get_without_parameters_returns_registered_users(self):
         result = self.users_data.get()
 
-        assert result == []
+        assert [] == result
 
     @mock.patch('app.users.data.registered_users')
     def test_get_with_valid_id_parameter(self, mock_registered_users):
         mock_registered_users.__iter__ = mock.Mock(return_value=iter([self.user]))
 
-        result = self.users_data.get(id=1)
+        result = self.users_data.get(id=str(1))
 
-        assert result == [self.user]
+        assert [self.user] == result
 
     @mock.patch('app.users.data.registered_users')
     def test_get_with_not_valid_id_parameter(self, mock_registered_users):
@@ -89,7 +85,7 @@ class TestUsersData:
 
         result = self.users_data.get(id=2)
 
-        assert result == []
+        assert [] == result
 
     @mock.patch('app.users.data.registered_users')
     def test_get_with_invalid_parameter(self, mock_registered_users):
@@ -97,4 +93,20 @@ class TestUsersData:
 
         result = self.users_data.get(id_d=2)
 
-        assert result == [self.user]
+        assert [self.user] == result
+
+    @mock.patch('app.users.data.registered_users')
+    def test_is_user_present_returns_user(self, mock_registered_users):
+        mock_registered_users.__iter__ = mock.Mock(return_value=iter([self.user]))
+
+        result = self.users_data.is_user_present(self.user.username)
+
+        assert self.user == result
+
+    @mock.patch('app.users.data.registered_users')
+    def test_is_user_present_returns_false(self, mock_registered_users):
+        mock_registered_users.__iter__ = mock.Mock(return_value=iter([]))
+
+        result = self.users_data.is_user_present(self.user.username)
+
+        assert False is result

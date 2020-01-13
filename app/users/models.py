@@ -1,7 +1,9 @@
-from django.db import models
+# from django.db import models
+from datetime import datetime, timedelta
 import hashlib
+import jwt
 
-# Create your models here.
+
 class User:
     ID = 0
 
@@ -14,8 +16,14 @@ class User:
     def obj(self):
         return {'id': str(self.id), 'username': self.username}
 
-    def get_hash(self, data):
-        return hashlib.sha256(data.encode('utf-8')).hexdigest()
-
     def __eq__(self, other):
         return self.username == other.username
+
+    @staticmethod
+    def create_user_token(user):
+        return jwt.encode({'username': user.username, 'exp': (datetime.now() + timedelta(seconds=5)).timestamp()},
+                          user.password_hash, algorithm='HS256').decode()
+
+    @staticmethod
+    def get_hash(data):
+        return hashlib.sha256(data.encode('utf-8')).hexdigest()

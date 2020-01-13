@@ -1,84 +1,64 @@
 from django.http import JsonResponse, HttpResponse
-from datetime import datetime, timedelta
 from rest_framework.viewsets import ViewSet
-import json
-import jwt
-import hashlib
+from rest_framework.exceptions import AuthenticationFailed
+from app.users.data import UsersData
+from app.users.models import User
 
-registered_users = []
-
-
-class User:
-    ID = 0
-
-    def __init__(self, username, password):
-        User.ID += 1
-        self.id = User.ID
-        self.username = username
-        self.password_hash = get_hash(password)
-
-    # def __str__(self):
-    #     # return json.dumps({'id': str(self.id), 'username': self.username})
-
-    def obj(self):
-        return {'id': str(self.id), 'username': self.username}
+users_data = UsersData()
 
 
 class UsersView(ViewSet):
 
     def get(self, request):
-        return JsonResponse({'users': [i.obj() for i in registered_users]})
-
-    def delete(self, request):
-        print('delete')
-        return HttpResponse()
+        return JsonResponse({'users': [i.obj() for i in users_data.get()]})
 
     def post(self, request):
-        return self.create_user(request)
-
-    def create_user(self, request):
-        body = json.loads(request.body.decode('utf-8'))
-        user = body['username']
-        is_user_present = len(list(filter(lambda x: x.username == user, registered_users))) == 0
-        if is_user_present:
-            registered_users.append(User(body['username'], body['password']))
-            return JsonResponse({'message': 'Successfully created user'}, status=201)
-        else:
-            return JsonResponse({'message': 'User with such username already exists'}, status=409)
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if username and password:
+            if users_data.add(User(username, password)):
+                return JsonResponse({'message': 'Successfully created user'}, status=201)
+            else:
+                return JsonResponse({'message': 'User with such username already exists'}, status=409)
+        return JsonResponse({'message': 'Invalid data'}, status=400)
 
 
 class SingleUserView(ViewSet):
     def get(self, request, user_id: int):
-        for u in registered_users:
-            if u.id == int(user_id):
-                return JsonResponse({'user': u.obj()})
+        result = users_data.get(id=user_id)
+        if result:
+            return JsonResponse({'user': [x.obj() for x in result]})
         return JsonResponse({'message': 'User wasn\'t found'})
 
-    def update(self, request, user_id):
-        body = json.loads(request.body.decode('utf-8'))
-        user = [x for x in registered_users if x.username == body['username'] and x.id == int(user_id)]
-        if len(user) == 0:
-            return JsonResponse({'message': 'Unable update user'}, status=409)
-        user[0].password_hash = get_hash(body['password'])
-        return JsonResponse({'message': 'Successfully updated user'})
+    def update(self, request, user_id: int):
+        new_password = request.data.get('password')
+        if new_password:
+            if users_data.update(user_id, User.get_hash(new_password)):
+                return JsonResponse({'message': 'Successfully updated user'})
+            else:
+                return JsonResponse({'message': 'Unable update user'}, status=409)
+        return JsonResponse({'message': 'Invalid data'}, status=400)
+
+    def delete(self, request, user_id):
+        try:
+            removed_user = users_data.delete(user_id)
+            return JsonResponse({'message': 'Removed user: ' + removed_user.username})
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=409)
 
 
 class UserLogin(ViewSet):
     def post(self, request):
-        body = json.loads(request.body.decode('utf-8'))
-        user = [x for x in registered_users if x.username == body['username']]
-        if len(user) == 0:
-            return JsonResponse({'message': 'User wasn\'t found'}, status=401)
-        elif user[0].password_hash != get_hash(body['password']):
-            return JsonResponse({'message': 'Password is incorrect'}, status=401)
-        user_token = create_user_token(user[0])
-        return JsonResponse({'access_token': user_token}, status=201)
-
-
-def create_user_token(user):
-    return jwt.encode({'username': user.username, 'exp': (datetime.now() + timedelta(seconds=5)).timestamp()},
-                      user.password_hash, algorithm='HS256').decode()
-
-
-def get_hash(data):
-    return hashlib.sha256(data.encode('utf-8')).hexdigest()
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if username and password:
+            user = users_data.is_user_present(username)
+            if user:
+                if User.get_hash(password) == user.password_hash:
+                    return JsonResponse({'access_token': User.create_user_token(user)}, status=201)
+                else:
+                    # return JsonResponse({'message': 'Password is incorrect'}, status=401)
+                    raise AuthenticationFailed('Password is incorrect')
+            else:
+                return JsonResponse({'message': 'User wasn\'t found'}, status=401)
+        return JsonResponse({'message': 'Invalid data'}, status=400)
