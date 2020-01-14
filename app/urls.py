@@ -20,6 +20,7 @@ from app.users.views import UserLogin
 
 urlpatterns = [
     path('users/', include('app.users.urls')),
+    path('books/', include('app.books.urls')),
     path('admin/', admin.site.urls),
     url('token/', UserLogin.as_view(
         {

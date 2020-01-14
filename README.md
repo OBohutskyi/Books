@@ -9,7 +9,7 @@ Ensure that you have installed the 3rd python version.
 
 ### Installing
 
-- Run `virtualenv env`
+- Run `virtualenv --python=python3 env`
 - Enter created environment with running `env\Scripts\activate` on Windows or `source env/bin/activate` on Mac OS.
 - Install all necessary requirements `pip install -r requirements.txt`
 
@@ -19,7 +19,7 @@ Ensure that you are using your virtual environment.
 
 Run 
 ```
-python3 manage.py runserver
+python manage.py runserver
 ```
 on MAC OS/Linux or
 ```

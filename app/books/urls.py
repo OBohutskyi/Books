@@ -2,17 +2,17 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url('^$', views.UsersView.as_view(
+    url('^$', views.BooksView.as_view(
         {
             'get': 'get',
             'post': 'post'
         }
-    ), name='users_list'),
-    url('^(?P<user_id>[0-9]+)/?$', views.SingleUserView.as_view(
+    ), name='books_list'),
+    url('^(?P<book_id>[0-9]+)/?$', views.SingleUserView.as_view(
         {
             'get': 'get',
             'delete': 'delete',
             'put': 'update'
-        }), name='user'),
+        }), name='book'),
 
 ]

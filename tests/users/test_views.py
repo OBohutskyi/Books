@@ -2,7 +2,6 @@ from django.test import Client
 from django.urls import reverse
 from app.users.data import User
 import mock
-import pytest
 
 
 class TestUsersView:

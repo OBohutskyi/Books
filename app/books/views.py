@@ -1,10 +1,22 @@
 from django.http import JsonResponse, HttpResponse
 from rest_framework.viewsets import ViewSet
 from rest_framework.exceptions import AuthenticationFailed
+from .models import Book
 from app.users.data import UsersData
 from app.users.models import User
 
 users_data = UsersData()
+
+
+class BooksView(ViewSet):
+
+    def get(self, request):
+        all_books = list(Book.objects.all())
+        return JsonResponse({'books': [b.obj() for b in all_books]})
+
+    def post(self, request):
+        print('post')
+        return HttpResponse()
 
 
 class UsersView(ViewSet):
