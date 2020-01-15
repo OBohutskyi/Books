@@ -2,20 +2,76 @@ from django.test import Client
 from django.urls import reverse
 from mock import PropertyMock, patch
 from .mocks import BookMock
-from app.books.models import Book
+import mock
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class TestBooksView:
 
-    def setup_class(cls):
-        cls.book = Book(name='test_book', description='book for testing')
-
     def test_get(self):
         with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
-            mock_books_objects.return_value = BookMock().objects
+            book_mock = BookMock()
+            mock_books_objects.return_value = book_mock.objects
 
             resp = Client().get(reverse('books_list'))
 
             assert {'books': [{'description': '', 'id': 'None', 'name': 'test book'}]} == resp.json()
             assert 200 == resp.status_code
-            mock_books_objects.all.assert_called()
+            book_mock.objects.all.assert_called()
+
+    def test_post(self):
+        with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
+            book_mock = BookMock()
+            mock_books_objects.return_value = book_mock.objects
+
+            resp = Client().post(reverse('books_list'), {'name': 'test name', 'description': 'test description'})
+
+            assert {'message': 'Successfully created book, id: 1'} == resp.json()
+            assert 201 == resp.status_code
+            book_mock.objects.create.assert_called()
+
+    def test_post_with_invalid_data(self):
+        resp = Client().post(reverse('books_list'), {'test': 'test data'})
+
+        assert {'message': 'Invalid data'} == resp.json()
+        assert 400 == resp.status_code
+
+
+class TestSingleBookView:
+
+    def test_get_valid_book_id(self):
+        with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
+            book_mock = BookMock()
+            mock_books_objects.return_value = book_mock.objects
+
+            resp = Client().get(reverse('book', args=[1]))
+
+            assert {'book': {'id': 'None', 'name': 'test book', 'description': ''}} == resp.json()
+            assert 200 == resp.status_code
+            book_mock.objects.get.assert_called_with(id='1')
+
+    def test_get_with_invalid_data(self):
+        with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
+            book_mock = BookMock()
+            mock_books_objects.return_value = book_mock.objects
+            book_mock.objects.get = mock.Mock(side_effect=ObjectDoesNotExist)
+
+            resp = Client().get(reverse('book', args=[1]))
+
+            assert {'message': 'Book doesn\'t exist'} == resp.json()
+            assert 401 == resp.status_code
+            book_mock.objects.get.assert_called_with(id='1')
+
+    def test_delete(self):
+        with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
+            book_mock = BookMock()
+            mock_books_objects.return_value = book_mock.objects
+
+            resp = Client().delete(reverse('book', args=[1]))
+
+            assert {'message': 'removed book', 'book': {'id': 'None', 'name': 'test book', 'description': ''}} \
+                   == resp.json()
+            assert 200 == resp.status_code
+            book_mock.objects.get.assert_called_with(id='1')
+            book_mock.objects.filter.assert_called_with(id='1')
+            book_mock.objects.filter().delete.assert_called()

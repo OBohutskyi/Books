@@ -1,11 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from rest_framework.viewsets import ViewSet
-from rest_framework.exceptions import AuthenticationFailed
 from .models import Book
-from app.users.data import UsersData
-from app.users.models import User
-
-users_data = UsersData()
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class BooksView(ViewSet):
@@ -15,62 +11,35 @@ class BooksView(ViewSet):
         return JsonResponse({'books': [b.obj() for b in all_books]})
 
     def post(self, request):
-        print('post')
-        return HttpResponse()
-
-
-class UsersView(ViewSet):
-
-    def get(self, request):
-        return JsonResponse({'users': [i.obj() for i in users_data.get()]})
-
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        if username and password:
-            if users_data.add(User(username, password)):
-                return JsonResponse({'message': 'Successfully created user'}, status=201)
-            else:
-                return JsonResponse({'message': 'User with such username already exists'}, status=409)
+        name = request.data.get('name')
+        description = request.data.get('description')
+        if name:
+            new_book = Book.objects.create(name=name, description=description)
+            return JsonResponse({'message': 'Successfully created book, id: ' + str(new_book.id)}, status=201)
         return JsonResponse({'message': 'Invalid data'}, status=400)
 
 
-class SingleUserView(ViewSet):
-    def get(self, request, user_id: int):
-        result = users_data.get(id=user_id)
-        if result:
-            return JsonResponse({'user': [x.obj() for x in result]})
-        return JsonResponse({'message': 'User wasn\'t found'})
+class SingleBookView(ViewSet):
 
-    def update(self, request, user_id: int):
-        new_password = request.data.get('password')
-        if new_password:
-            if users_data.update(user_id, User.get_hash(new_password)):
-                return JsonResponse({'message': 'Successfully updated user'})
-            else:
-                return JsonResponse({'message': 'Unable update user'}, status=409)
-        return JsonResponse({'message': 'Invalid data'}, status=400)
-
-    def delete(self, request, user_id):
+    def get(self, request, book_id):
         try:
-            removed_user = users_data.delete(user_id)
-            return JsonResponse({'message': 'Removed user: ' + removed_user.username})
-        except Exception as e:
-            return JsonResponse({'message': str(e)}, status=409)
+            book = Book.objects.get(id=book_id)
+            return JsonResponse({'book': book.obj()})
+        except ObjectDoesNotExist:
+            return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
 
+    def delete(self, request, book_id):
+        try:
+            removed_book = Book.objects.get(id=book_id)
+            result = Book.objects.filter(id=book_id).delete()
+            if result[0] == 0:
+                return JsonResponse({'message': 'Unable to remove book'}, status=204)
+            response_message = {'message': 'removed book'}
+            response_message['book'] = removed_book.obj()
+            return JsonResponse(response_message)
+        except ObjectDoesNotExist:
+            return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
 
-class UserLogin(ViewSet):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        if username and password:
-            user = users_data.is_user_present(username)
-            if user:
-                if User.get_hash(password) == user.password_hash:
-                    return JsonResponse({'access_token': User.create_user_token(user)}, status=201)
-                else:
-                    # return JsonResponse({'message': 'Password is incorrect'}, status=401)
-                    raise AuthenticationFailed('Password is incorrect')
-            else:
-                return JsonResponse({'message': 'User wasn\'t found'}, status=401)
-        return JsonResponse({'message': 'Invalid data'}, status=400)
+    def update(self, request):
+        print('update')
+        return HttpResponse()

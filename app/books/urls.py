@@ -8,11 +8,10 @@ urlpatterns = [
             'post': 'post'
         }
     ), name='books_list'),
-    url('^(?P<book_id>[0-9]+)/?$', views.SingleUserView.as_view(
+    url('^(?P<book_id>[0-9]+)/?$', views.SingleBookView.as_view(
         {
             'get': 'get',
             'delete': 'delete',
             'put': 'update'
         }), name='book'),
-
 ]

@@ -11,5 +11,4 @@ class Book(models.Model):
         return {'id': self.id, 'name': self.name, 'description': self.description}
 
     def __str__(self):
-        return self.name
-
+        return 'id: ' + str(self.id) + ', name:' + str(self.name) + ', description:' + str(self.description)
