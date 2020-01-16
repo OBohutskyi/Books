@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from rest_framework.viewsets import ViewSet
 from .models import Book
 from django.core.exceptions import ObjectDoesNotExist
