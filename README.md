@@ -21,11 +21,6 @@ Run
 ```
 python manage.py runserver
 ```
-on MAC OS/Linux or
-```
-python manage.py runserver
-```
-on Windows
 to start server work.
 
 ## Tests

@@ -31,15 +31,26 @@ class SingleBookView(ViewSet):
     def delete(self, request, book_id):
         try:
             removed_book = Book.objects.get(id=book_id)
-            result = Book.objects.filter(id=book_id).delete()
-            if result[0] == 0:
-                return JsonResponse({'message': 'Unable to remove book'}, status=204)
+            Book.objects.filter(id=book_id).delete()
             response_message = {'message': 'removed book'}
             response_message['book'] = removed_book.obj()
             return JsonResponse(response_message)
         except ObjectDoesNotExist:
             return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
 
-    def update(self, request):
-        print('update')
-        return HttpResponse()
+    def update(self, request, book_id):
+        name = request.data.get('name')
+        description = request.data.get('description')
+        if name or description:
+            try:
+                filter = Book.objects.filter(id=book_id)
+                if name:
+                    updated_book = filter.update(name=name)
+                if description:
+                    updated_book = filter.update(description=description)
+                response_message = {'message': 'Successfully updated book'}
+                response_message['book'] = updated_book[0].obj()
+                return JsonResponse(response_message)
+            except ObjectDoesNotExist:
+                return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
+        return JsonResponse({'message': 'Invalid data'}, status=400)

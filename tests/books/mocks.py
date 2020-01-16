@@ -1,5 +1,4 @@
 import mock
-from django.db.models.query import QuerySet
 from app.books.models import Book
 
 
@@ -25,8 +24,4 @@ class FilterMock:
     def __init__(self, test_book):
         self.return_value = mock.Mock(return_value=iter([test_book]))
         self.delete = mock.Mock(return_value=(1, {'books.Book': 1}))
-
-    class QueryMock(QuerySet):
-
-        def __init__(self):
-            super().__init__()
+        self.update = mock.Mock(return_value=[test_book])
