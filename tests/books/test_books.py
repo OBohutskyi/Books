@@ -25,7 +25,8 @@ class TestBooksView:
         with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
             mock_books_objects.return_value = self.book_mock.objects
 
-            resp = Client().post(reverse('books_list'), {'name': 'test name', 'description': 'test description'})
+            resp = Client().post(reverse('books_list'), {'name': 'test name', 'description': 'test description',
+                                                         'creator': 'test creator'})
 
             assert {'message': 'Successfully created book, id: 1'} == resp.json()
             assert 201 == resp.status_code

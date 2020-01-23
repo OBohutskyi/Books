@@ -7,7 +7,7 @@ from app.auth import UserAuthentication
 
 
 class UsersView(ViewSet):
-    # authentication_classes = (UserAuthentication,)
+    authentication_classes = (UserAuthentication,)
 
     def get(self, request):
         all_users = list(User.objects.all())
@@ -26,6 +26,7 @@ class UsersView(ViewSet):
 
 
 class SingleUserView(ViewSet):
+    authentication_classes = (UserAuthentication,)
 
     def get(self, request, user_id: int):
         try:
@@ -56,6 +57,7 @@ class SingleUserView(ViewSet):
 
 
 class UserLogin(ViewSet):
+    authentication_classes = (UserAuthentication,)
 
     def post(self, request):
         username = request.data.get('username')

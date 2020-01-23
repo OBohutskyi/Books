@@ -22,6 +22,10 @@ class BookMock:
 class FilterMock:
 
     def __init__(self, test_book):
+        self.test_book = test_book
         self.return_value = mock.Mock(return_value=iter([test_book]))
         self.delete = mock.Mock(return_value=(1, {'books.Book': 1}))
         self.update = mock.Mock(return_value=[test_book])
+
+    def __getitem__(self, indices):
+        return self.test_book

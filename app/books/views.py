@@ -2,9 +2,11 @@ from django.http import JsonResponse
 from rest_framework.viewsets import ViewSet
 from .models import Book
 from django.core.exceptions import ObjectDoesNotExist
+from app.auth import UserAuthentication
 
 
 class BooksView(ViewSet):
+    authentication_classes = (UserAuthentication,)
 
     def get(self, request):
         all_books = list(Book.objects.all())
@@ -13,13 +15,15 @@ class BooksView(ViewSet):
     def post(self, request):
         name = request.data.get('name')
         description = request.data.get('description')
-        if name:
-            new_book = Book.objects.create(name=name, description=description)
+        creator_id = request.data.get('creator')
+        if name and creator_id:
+            new_book = Book.objects.create(name=name, description=description, creator_id=creator_id)
             return JsonResponse({'message': 'Successfully created book, id: ' + str(new_book.id)}, status=201)
         return JsonResponse({'message': 'Invalid data'}, status=400)
 
 
 class SingleBookView(ViewSet):
+    authentication_classes = (UserAuthentication,)
 
     def get(self, request, book_id):
         try:
@@ -41,16 +45,19 @@ class SingleBookView(ViewSet):
     def update(self, request, book_id):
         name = request.data.get('name')
         description = request.data.get('description')
-        if name or description:
+        creator_id = request.data.get('creator')
+        if name or description or creator_id:
             try:
-                filter = Book.objects.filter(id=book_id)
+                existing_book = Book.objects.filter(id=book_id)
+                if not existing_book:
+                    return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
                 if name:
-                    updated_book = filter.update(name=name)
+                    existing_book.update(name=name)
                 if description:
-                    updated_book = filter.update(description=description)
-                response_message = {'message': 'Successfully updated book'}
-                response_message['book'] = updated_book[0].obj()
-                return JsonResponse(response_message)
+                    existing_book.update(description=description)
+                if creator_id:
+                    existing_book.update(creator=creator_id)
+                return JsonResponse({'message': 'Successfully updated book', 'book': existing_book[0].obj()})
             except ObjectDoesNotExist:
                 return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
         return JsonResponse({'message': 'Invalid data'}, status=400)

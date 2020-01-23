@@ -2,7 +2,6 @@ from django.test import Client
 from django.urls import reverse
 from mock import PropertyMock, patch
 from .mocks import UserMock, EmptyFilterMock
-from app.users.models import User
 import mock
 from django.core.exceptions import ObjectDoesNotExist
 
