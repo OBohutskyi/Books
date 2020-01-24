@@ -18,9 +18,17 @@ class UserAuthentication(authentication.BaseAuthentication):
         try:
             token = auth[1].decode()
             decoded_token = jwt.decode(token, key, algorithm='HS256')
+            request.META['HTTP_CUSTOM_HEADER'] = decoded_token['books_ids']
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed('Token was expired')
         except (jwt.DecodeError, UnicodeError):
             raise exceptions.AuthenticationFailed('Invalid token header.')
 
         return decoded_token, None
+
+
+class UsersViewAuthentication(UserAuthentication):
+
+    def authenticate(self, request):
+        if request.method == 'GET':
+            return super().authenticate(request)

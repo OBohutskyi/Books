@@ -3,11 +3,11 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.exceptions import AuthenticationFailed
 from app.users.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from app.auth import UserAuthentication
+from app.auth import UserAuthentication, UsersViewAuthentication
 
 
 class UsersView(ViewSet):
-    authentication_classes = (UserAuthentication,)
+    authentication_classes = (UsersViewAuthentication,)
 
     def get(self, request):
         all_users = list(User.objects.all())
@@ -57,7 +57,6 @@ class SingleUserView(ViewSet):
 
 
 class UserLogin(ViewSet):
-    authentication_classes = (UserAuthentication,)
 
     def post(self, request):
         username = request.data.get('username')

@@ -20,7 +20,12 @@ class User(models.Model):
         return self.id
 
     def create_user_token(self):
+        from app.books.models import Book
+        # print(User.objects.get(id=1).books)
+        books = Book.objects.filter(creator_id=self.id)
+        books_ids = [x.id for x in books]
         return jwt.encode({'username': self.username,
+                           'books_ids': books_ids,
                            'exp': (datetime.now() + timedelta(days=1)).timestamp()},
                           key, algorithm='HS256').decode()
 

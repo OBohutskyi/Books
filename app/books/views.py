@@ -3,6 +3,7 @@ from rest_framework.viewsets import ViewSet
 from .models import Book
 from django.core.exceptions import ObjectDoesNotExist
 from app.auth import UserAuthentication
+from .permissions import book_write_permission
 
 
 class BooksView(ViewSet):
@@ -33,6 +34,7 @@ class SingleBookView(ViewSet):
             return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
 
     def delete(self, request, book_id):
+
         try:
             removed_book = Book.objects.get(id=book_id)
             Book.objects.filter(id=book_id).delete()
@@ -42,11 +44,11 @@ class SingleBookView(ViewSet):
         except ObjectDoesNotExist:
             return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
 
+    @book_write_permission
     def update(self, request, book_id):
         name = request.data.get('name')
         description = request.data.get('description')
-        creator_id = request.data.get('creator')
-        if name or description or creator_id:
+        if name or description:
             try:
                 existing_book = Book.objects.filter(id=book_id)
                 if not existing_book:
@@ -55,8 +57,6 @@ class SingleBookView(ViewSet):
                     existing_book.update(name=name)
                 if description:
                     existing_book.update(description=description)
-                if creator_id:
-                    existing_book.update(creator=creator_id)
                 return JsonResponse({'message': 'Successfully updated book', 'book': existing_book[0].obj()})
             except ObjectDoesNotExist:
                 return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
