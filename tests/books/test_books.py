@@ -1,7 +1,8 @@
 from django.test import Client
 from django.urls import reverse
 from mock import PropertyMock, patch
-from .mocks import BookMock
+from app.auth import UserAuthentication
+from .mocks import BookMock, MockUserAuthentication
 import mock
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -10,6 +11,7 @@ class TestBooksView:
 
     def setup(self) -> None:
         self.book_mock = BookMock()
+        UserAuthentication.authenticate = MockUserAuthentication.authenticate
 
     def test_get(self):
         with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
@@ -43,6 +45,7 @@ class TestSingleBookView:
 
     def setup(self) -> None:
         self.book_mock = BookMock()
+        UserAuthentication.authenticate = MockUserAuthentication.authenticate
 
     def test_get_valid_book_id(self):
         with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
@@ -65,7 +68,7 @@ class TestSingleBookView:
             assert 401 == resp.status_code
             self.book_mock.objects.get.assert_called_with(id='1')
 
-    def test_delete(self):
+    def test_delete_existing_book(self):
         with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
             mock_books_objects.return_value = self.book_mock.objects
 
@@ -78,7 +81,7 @@ class TestSingleBookView:
             self.book_mock.objects.filter.assert_called_with(id='1')
             self.book_mock.objects.filter().delete.assert_called()
 
-    def test_delete_book_do_not_exists(self):
+    def test_delete_book_not_existing_book(self):
         with patch('app.books.views.Book.objects', new_callable=PropertyMock) as mock_books_objects:
             mock_books_objects.return_value = self.book_mock.objects
             self.book_mock.objects.get = mock.Mock(side_effect=ObjectDoesNotExist)
@@ -112,14 +115,17 @@ class TestSingleBookView:
             resp = Client().put(
                 reverse('book', args=[1]),
                 {'name': 'updated_name'},
-                content_type='application/json')
+                content_type='application/json',)
 
             assert {'message': "Book doesn't exist"} == resp.json()
             assert 401 == resp.status_code
             self.book_mock.objects.filter.assert_called_with(id='1')
 
     def test_update_invalid_data(self):
-        resp = Client().put(reverse('book', args=[1]))
+        resp = Client().put(reverse(
+            'book', args=[1]),
+            {},
+            content_type='application/json')
 
         assert {'message': 'Invalid data'} == resp.json()
         assert 400 == resp.status_code

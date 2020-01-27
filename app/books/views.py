@@ -33,8 +33,8 @@ class SingleBookView(ViewSet):
         except ObjectDoesNotExist:
             return JsonResponse({'message': 'Book doesn\'t exist'}, status=401)
 
+    @book_write_permission
     def delete(self, request, book_id):
-
         try:
             removed_book = Book.objects.get(id=book_id)
             Book.objects.filter(id=book_id).delete()

@@ -6,7 +6,6 @@ class UserMock:
 
     def __init__(self):
         self.objects = UserMock.UserMockObjects()
-        # self.get_hash = mock.Mock(return_value='test_hash')
 
     class UserMockObjects:
 
@@ -33,3 +32,10 @@ class EmptyFilterMock:
 
     def __len__(self):
         return 0
+
+
+class MockUserAuthentication:
+
+    def authenticate(self, request):
+        request.META['HTTP_CUSTOM_HEADER'] = [1]
+        return 'decoded_token', None

@@ -29,3 +29,10 @@ class FilterMock:
 
     def __getitem__(self, indices):
         return self.test_book
+
+
+class MockUserAuthentication:
+
+    def authenticate(self, request):
+        request.META['HTTP_CUSTOM_HEADER'] = [1]
+        return 'decoded_token', None

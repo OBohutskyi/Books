@@ -1,9 +1,10 @@
 from django.test import Client
 from django.urls import reverse
 from mock import PropertyMock, patch
-from .mocks import UserMock, EmptyFilterMock
+from .mocks import UserMock, EmptyFilterMock, MockUserAuthentication
 import mock
 from django.core.exceptions import ObjectDoesNotExist
+from app.auth import UserAuthentication
 
 
 class TestUsersView:
@@ -12,6 +13,7 @@ class TestUsersView:
         self.user_mock = UserMock()
 
     def test_get_when_users_arent_created_returns_empty_list(self):
+        UserAuthentication.authenticate = MockUserAuthentication.authenticate
         with patch('app.users.views.User.objects', new_callable=PropertyMock) as mock_users_objects:
             mock_users_objects.return_value = self.user_mock.objects
 
@@ -52,6 +54,7 @@ class TestSingleUserView:
 
     def setup(self) -> None:
         self.user_mock = UserMock()
+        UserAuthentication.authenticate = MockUserAuthentication.authenticate
 
     def test_get_valid_user_id(self):
         with patch('app.users.views.User.objects', new_callable=PropertyMock) as mock_users_objects:
