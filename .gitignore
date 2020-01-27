@@ -1,2 +1,5 @@
-/env
-/.idea
+/env*
+/.*
+/coverage
+*.pyc
+*.coverage
