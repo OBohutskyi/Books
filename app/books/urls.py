@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import include
 from . import views
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
             'delete': 'delete',
             'put': 'update'
         }), name='book'),
+    url('^(?P<book_id>[0-9]+)/reviews/?', include('app.books.reviews.urls')),
 ]
