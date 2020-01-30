@@ -1,0 +1,598 @@
+{
+	"info": {
+		"_postman_id": "2c5dfb02-fea6-47b9-a8ff-3da02f972eed",
+		"name": "Books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"uasername\",\n\t\"password\": \"password\"\n}\n"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/users/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVhc2VybmFtZSIsImJvb2tzX2lkcyI6W10sImV4cCI6MTU4MDQ3NjkwNC40ODE5ODF9.YCURd3ZaroiHDX6oY8addzV2DZAcKSoQObEcwd99TT0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user2\",\n\t\"password\": \"password21\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/users/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET users by id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiZXhwIjoxNTc5ODUxMjI1Ljg2MzA0MX0.mRVoZEb7YHBnzxK6HbxgTHdEJt7qF6bxPHpqKtphQus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user2\",\n\t\"password\": \"password21\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/users/3/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						"3",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT users by id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"password\": \"password21231231\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/users/1232323/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						"1232323",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user without books",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"uasername\",\n\t\"password\": \"password\"\n}\n"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/token/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user with books",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"userw2213123ew\",\r\n\t\"password\": \"password21\"\r\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/token/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE user",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/users/8/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						"8",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all books",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiYm9va3NfaWRzIjpbMjIsMjNdLCJleHAiOjE1ODAyMTI4NDQuMDM1NzJ9.kTCQ0BjVrg0EfP97qbJvCqzZNN6qgsBeOaHCc6agBnI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET book by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiYm9va3NfaWRzIjpbMjIsMjNdLCJleHAiOjE1Nzk5NjMyNTIuNzIyMjJ9.JDsaTKGkaxw8BbEbzQBRRHt6HZT67JzcUvzwNsGnvRo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE book by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiYm9va3NfaWRzIjpbMjIsMjNdLCJleHAiOjE1ODAyMTI4NDQuMDM1NzJ9.kTCQ0BjVrg0EfP97qbJvCqzZNN6qgsBeOaHCc6agBnI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/223/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						"223",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADD new book",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVhc2VybmFtZSIsImJvb2tzX2lkcyI6W10sImV4cCI6MTU4MDQ3NjkwNC40ODE5ODF9.YCURd3ZaroiHDX6oY8addzV2DZAcKSoQObEcwd99TT0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"new book for 13\",\n\t\"description\": \"description for new 13 book\",\n\t\"creator\": \"13\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Book",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"test\": \"test_data\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE book by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiYm9va3NfaWRzIjpbMjIsMjNdLCJleHAiOjE1Nzk5NjMyNTIuNzIyMjJ9.JDsaTKGkaxw8BbEbzQBRRHt6HZT67JzcUvzwNsGnvRo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"new name 22 - update\",\n\t\"description\": \"new descr renamed 22224\",\n\t\"creator\": \"3\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/22/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						"22",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all reviews",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiYm9va3NfaWRzIjpbMjNdLCJleHAiOjE1ODA0NzE2MjEuNDcxMzkzfQ.X7E_20BbPhKn_3_9njpeWLZVjrFRKqV2PtdG3szAn64",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/3/reviews/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						"3",
+						"reviews",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST add new review",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InVzZXJ3MjIxMzEyM2V3IiwiYm9va3NfaWRzIjpbMjNdLCJleHAiOjE1ODA0NzE2MjEuNDcxMzkzfQ.X7E_20BbPhKn_3_9njpeWLZVjrFRKqV2PtdG3szAn64",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"review\": \"new super review\",\n\t\"reviewed_by\": \"13\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/books/3/reviews/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"books",
+						"3",
+						"reviews",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

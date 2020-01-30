@@ -1,0 +1,9 @@
+.coverage
+coverage
+.pytest_cache
+env
+env2
+tests
+.gitignore
+README.md
+setup.cfg

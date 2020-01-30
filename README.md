@@ -23,6 +23,9 @@ python manage.py runserver
 ```
 to start server work.
 
+
+Import attached requests `Books.postman_collection.json` in file to Postman.
+
 ## Tests
 
 Run `pytest` command.

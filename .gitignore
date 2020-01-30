@@ -1,5 +1,9 @@
 /env*
+
 /.*
+!/.dockerignore
+
 /coverage
+
 *.pyc
 *.coverage
